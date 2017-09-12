@@ -28,7 +28,7 @@ on OpenBSD, run the following commands in your local repository:
     make
     doas make install
 
-You can install to other locacations by using the --prefix option to
+You can install to other locations by using the --prefix option to
 configure.  For instance, to install into the current user's home
 directory the following steps will work:
 
