@@ -1,0 +1,128 @@
+README for truncate
+===================
+Jason Stephenson <jason@sigio.com>
+v1.0, 12 September 2017
+
+DESCRIPTION
+-----------
+
+The truncate utility adjusts the length of each regular file given on
+the command-line.
+
+This is the FreeBSD implementation of truncate with modifications for
+OpenBSD.  The FreeBSD VCS tags have been removed, along with the
+includes for the libutil library headers.  (The latter does not exist
+on OpenBSD.)  The expand_number function was copied from the libutil
+sources and modified in a similar manner to the code for the truncate
+utility.
+
+INSTALLATION
+------------
+
+This repository uses GNU Autoconf to build.  You will need to install
+autoconf-2.69 and automake-1.9.  To build and install to /usr/local/
+on OpenBSD, run the following commands in your local repository:
+
+    AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.9 autoreconf -i
+    ./configure
+    make
+    doas make install
+
+You can install to other locacations by using the --prefix option to
+configure.  For instance, to install into the current user's home
+directory the following steps will work:
+
+    AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.9 autoreconf -i
+    ./configure --prefix=$HOME
+    make
+    make install
+
+NOTE: Later versions of autoconf and automake should work.  Adjust the
+version variables as appropriate.
+
+Two files are currently installed by the above commands:
+
+* the truncate binary in $PREFIX/bin
+* the truncate.1 man page in $PREFIX/share/man/man1
+
+These can be manually deleted in order to remove truncate.
+
+SYNOPSIS
+--------
+
+    truncate [-c] -s [+|-]size[K|k|M|m|G|g|T|t] file ...
+    truncate [-c] -r rfile file ...
+
+
+The following options are available:
+
+    -c      Do not create files if they do not exist.  The truncate utility
+            does not treat this as an error.  No error messages are displayed
+            and the exit value is not affected.
+
+    -r rfile
+            Truncate or extend files to the length of the file rfile.
+
+    -s [+|-]size[K|k|M|m|G|g|T|t]
+            If the size argument is preceded by a plus sign (+), files will
+            be extended by this number of bytes.  If the size argument is
+            preceded by a dash (-), file lengths will be reduced by no more
+            than this number of bytes, to a minimum length of zero bytes.
+            Otherwise, the size argument specifies an absolute length to
+            which all files should be extended or reduced as appropriate.
+
+            The size argument may be suffixed with one of K, M, G or T
+            (either upper or lower case) to indicate a multiple of Kilobytes,
+            Megabytes, Gigabytes or Terabytes respectively.
+
+Exactly one of the -r and -s options must be specified.
+
+If a file is made smaller, its extra data is lost.  If a file is made
+larger, it will be extended as if by writing bytes with the value
+zero.  If the file does not exist, it is created unless the -c option
+is specified.
+
+Note that, while truncating a file causes space on disk to be freed,
+extending a file does not cause space to be allocated.  To extend a
+file and actually allocate the space, it is necessary to explicitly
+write data to it, using (for example) the shell's '>>' redirection
+syntax, or dd(1).
+
+EXIT STATUS
+-----------
+
+The truncate utility exits 0 on success, and >0 if an error occurs.
+If the operation fails for an argument, truncate will issue a
+diagnostic and continue processing the remaining arguments.
+
+STANDARDS
+---------
+
+The truncate utility conforms to no known standards.
+
+HISTORY
+-------
+
+The truncate utility first appeared in FreeBSD 4.2.
+
+AUTHORS
+-------
+
+The truncate utility was written by Sheldon Hearn
+<sheldonh@starjuice.net>.
+
+The truncate utility includes code that is copyright 2007 by Eric
+Anderson <anderson@FreeBSD.org> and Pawel Jakub Dawidek
+<pjd@FreeBSD.org>.
+
+The truncate utility was ported to OpenBSD 6.1 by Jason Stephenson
+<jason@sigio.com>.
+
+LICENSE
+-------
+
+The truncate utility C source code files are covered by the 2-clause,
+FreeBSD license.  See the file COPYING for the actual license.
+
+The Makefile.am files are covered by the OpenBSD license.  See the
+files themselves for the details.
